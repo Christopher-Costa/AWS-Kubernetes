@@ -1,0 +1,6 @@
+---
+- name: Install prerequisite packages
+  become: yes
+  dnf:
+    name: iproute-tc
+    state: present

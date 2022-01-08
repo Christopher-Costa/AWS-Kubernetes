@@ -1,0 +1,11 @@
+---
+- name: Set hostname
+  become: yes
+  shell: hostnamectl set-hostname $(curl -s http://169.254.169.254/latest/meta-data/local-hostname)
+
+- name: Update /etc/hosts
+  become: yes
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ hostvars[item].ip_address }}   {{ item.split('.')[0] }} {{ item }} {{ hostvars[item].ec2_dns_name }}"
+  loop:  "{{ groups['all'] | sort }}"

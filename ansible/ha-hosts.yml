@@ -1,0 +1,99 @@
+all:
+  children:
+    kubernetes_load_balancers:
+      hosts:
+        lb.costa.lab:
+          ip_address: 10.10.111.140
+
+    kubernetes_masters:
+      hosts:
+        master1.costa.lab:
+          name: master1
+          ip_address: 10.10.111.141 
+          bootstrap: True
+        master2.costa.lab:
+          name: master2 
+          ip_address: 10.10.111.142
+        master3.costa.lab:
+          name: master3
+          ip_address: 10.10.111.143
+
+###################################
+# kubernetes_masters vars
+###################################
+      vars:
+        kubernetes_bootstrap_master: master1.costa.lab
+        load_balancer_ip_address: 10.10.111.140
+
+    kubernetes_nodes:
+      children:
+        elasticsearch:
+          children:
+            site1:
+              hosts:
+                worker1.costa.lab: 
+                  name: worker1
+                  ip_address: 10.10.111.144
+                worker2.costa.lab:
+                  name: worker2
+                  ip_address: 10.10.111.145
+
+###################################
+# elasticsearch site1 vars
+###################################
+              vars:
+                elasticsearch_version: 7.11.0
+                site: site1
+                cluster: site1
+                namespace: site1
+                master_replicas: 2
+                nodeport: 32001
+
+            site2:
+              hosts:
+                worker3.costa.lab:
+                  name: worker3
+                  ip_address: 10.10.111.146
+                worker4.costa.lab:
+                  name: worker4
+                  ip_address: 10.10.111.147
+
+###################################
+# elasticsearch site2 vars
+###################################
+              vars:
+                elasticsearch_version: 7.11.0
+                site: site2
+                cluster: site2
+                namespace: site2
+                master_replicas: 2
+                nodeport: 32002
+
+###################################
+# kubernetes_nodes vars
+###################################
+      vars:
+        kubernetes_master: master1
+        elasticsearch_user: kubernetes
+        elasticsearch_group: kubernetes
+        elasticsearch_dirs:
+          - /data/elasticsearch0
+          - /data/elasticsearch1
+          - /data/elasticsearch-master
+        elastic_master_volume: /data/elasticsearch-master
+        elastic_data_volumes:
+          - { 'index': 0, 'volume': /data/elasticsearch0 }
+          - { 'index': 1, 'volume': /data/elasticsearch1 }
+
+
+##################################
+# all vars
+##################################
+  vars:
+    docker_version: 19.03.2
+    kubernetes_version: 1.21.2-0
+    kubernetes_admin_user: kubeadm
+    kubernetes_users:
+      - user1
+      - user2
+      - user3

@@ -1,0 +1,14 @@
+---
+- name: Restart Docker
+  listen: restart_docker
+  become: yes
+  become_user: root
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: docker
+
+- name: Reboot System
+  listen: reboot_system
+  become: yes
+  reboot:

@@ -1,0 +1,24 @@
+- import_playbook: update_etc_hosts.yml
+
+- name: Apply General Kubernetes Configuration
+  hosts:
+    - kubernetes_masters
+    - kubernetes_nodes
+  roles:
+    - aws_server
+    - containerd_server
+    - kubernetes_server
+
+- name: Configure Kubernetes Master
+  hosts:
+    - kubernetes_masters
+  roles:
+    - kubernetes_master
+
+- name: Configure Kubernetes Node
+  hosts:
+    - kubernetes_nodes
+  roles:
+    - kubernetes_node
+  tags:
+    - node

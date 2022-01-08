@@ -1,0 +1,24 @@
+- name: Update NetworkManager to ignore Calico interfaces
+  become: yes
+  ini_file:
+    path: /etc/NetworkManager/conf.d/calico.conf
+    section: keyfile
+    option: unmanaged-devices
+    value: interface-name:cali*;interface-name:tunl*;interface-name:vxlan.calico;interface-name:wireguard.cali
+  notify: reboot_system
+
+- name: Disable nm-cloud-setup.timer
+  become: yes
+  systemd:
+    name: nm-cloud-setup.timer
+    enabled: false
+    state: stopped
+  notify: reboot_system
+
+- name: Disable nm-cloud-setup
+  become: yes
+  systemd:
+    name: nm-cloud-setup
+    enabled: false
+    state: stopped
+  notify: reboot_system

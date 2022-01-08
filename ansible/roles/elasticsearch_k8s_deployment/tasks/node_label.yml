@@ -1,0 +1,31 @@
+---
+- name: Create Node Label Configuration Files
+  delegate_to: localhost
+  template:
+    src: templates/node_label.j2
+    dest: "configs/{{ item }}-node_label.yml"
+  vars:
+    node_name: "{{ item }}"
+    site: "{{ hostvars[item].site }}"
+  loop:  "{{ groups['kubernetes_nodes'] }}"
+  tags:
+    - node_label
+  when: create_config_files | bool
+  
+
+- name: Apply Node Labels Configuration
+  become: yes
+  become_user: "{{ kubernetes_admin_user }}"
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'node_label.j2') }}"
+    validate:
+      fail_on_error: no
+      strict: yes
+  vars:
+    node_name: "{{ item }}"
+    site: "{{ hostvars[item].site }}"
+  loop:  "{{ groups['kubernetes_nodes'] }}"
+  tags:
+    - node_label
+  when: apply_config | bool

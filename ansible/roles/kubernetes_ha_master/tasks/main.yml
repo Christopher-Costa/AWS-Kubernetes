@@ -1,0 +1,31 @@
+---
+- include_tasks: dependencies.yml
+  tags:
+    - dependency
+
+- include_tasks: firewall.yml
+  tags:
+    - firewall
+
+- include_tasks: create_user.yml
+  tags:
+    - user
+
+- block:
+    - include_tasks: initialize.yml
+      tags: initialize
+ 
+    - include_tasks: setup_user.yml
+      tags: user
+
+    - include_tasks: networking.yml
+      tags: networking
+  when: bootstrap | default(false)
+
+- block:
+    - include_tasks: join.yml
+      tags: join
+
+    - include_tasks: setup_user.yml
+      tags: user
+  when: not bootstrap | default(false)

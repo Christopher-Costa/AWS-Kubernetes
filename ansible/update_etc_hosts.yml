@@ -1,0 +1,28 @@
+---
+- name: Update local /etc/hosts file with EC2 public IP addresses
+  hosts: localhost
+  tasks:
+   - name: Check terraform outputs
+     shell: terraform output
+     args:
+       chdir: "{{ playbook_dir}}/../terraform"
+     changed_when: no
+     register: terraform_output
+
+   - name: update /etc/hosts
+     become: yes
+     become_user: root
+     lineinfile:
+       path: /etc/hosts
+       regexp: >-
+         ^.* {{ item | regex_replace('^(\S+).*$', '\1') }}
+       line: >-
+         {{ '%-16s  %s' | format(
+                item | regex_replace('^.*"(.*)"$', '\1'),
+                item | regex_replace('^(\S+).*$', '\1')
+            )
+         }}
+     loop: "{{ terraform_output.stdout_lines }}"
+     loop_control:
+       label: >- 
+         {{ item | regex_replace('^(\S+).*$', '\1') }}

@@ -1,0 +1,29 @@
+---
+- name: Create .kube directory for {{ kubernetes_admin_user }} account
+  become: yes
+  become_user: "{{ kubernetes_admin_user }}"
+  file:
+    name: ~{{ kubernetes_admin_user}}/.kube
+    state: directory
+  tags:
+    - user
+
+- name: Copy config file into {{ kubernetes_admin_user }} home
+  become: yes
+  become_user: root
+  command: cp -i /etc/kubernetes/admin.conf ~{{ kubernetes_admin_user }}/.kube/config
+  args:
+    creates: /home/{{ kubernetes_admin_user}}/.kube/config 
+  tags:
+    - user
+
+- name: Set config file ownership
+  become: yes
+  become_user: root
+  file:
+    path: /home/{{ kubernetes_admin_user }}/.kube/config
+    owner: "{{ kubernetes_admin_user }}"
+    group: "{{ kubernetes_admin_group }}"
+    state: file
+  tags:
+    - user

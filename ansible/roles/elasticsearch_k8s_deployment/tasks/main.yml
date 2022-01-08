@@ -1,0 +1,20 @@
+---
+- include_tasks: node_label.yml
+  tags:
+    - node_label
+
+- include_tasks: namespace.yml
+  tags:
+    - namespace
+
+- include_tasks: master.yml
+  tags:
+    - master
+
+- include_tasks: data.yml
+  tags:
+    - data
+
+- include_tasks: nodeport.yml
+  tags:
+    - nodeport
