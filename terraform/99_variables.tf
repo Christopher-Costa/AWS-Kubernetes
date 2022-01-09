@@ -64,5 +64,5 @@ variable "ec2_cp_private_ip_addresses" {
 variable "ec2_node_private_ip_addresses" {
   type = list
   description = "A list of private IP addresses for the worker node instances"
-  default = [ "10.0.1.11" ]
+  default = [ "10.0.1.11", "10.0.1.12" ]
 } 
